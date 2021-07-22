@@ -1,0 +1,67 @@
+
+<%- include('partials/header'); %>
+
+
+<div class="container">
+	<div class="row">
+		<h1 style="text-align: center">Login</h1>
+		<div style="width: 30%; margin: 25px auto">
+			<form action="/login" method="POST">
+				<div class="form-group">
+					<input id="username" class="form-control" type="text" name="username" placeholder="Username">
+				</div>
+				<div class="form-group">
+					<input id="password" class="form-control" type="password" name="password" placeholder="Password">
+				</div>
+				<div class="form-group">
+					<button id="button" class="btn btn-lg btn-primary btn-block" disabled>Login</button>
+				</div>
+			</form>
+			<a href="/campgrounds"> Go Back</a>
+		</div>
+	</div>
+</div>
+<p id="test"></p>
+
+<script>
+	var button = document.getElementById("button");
+    var password = document.getElementById("password");
+    var userName = document.getElementById("username");
+
+    //variables to keep track of the input fields are empty or not
+    let passwordEmpty = true;
+    let userNameEmpty = true;
+
+    userName.addEventListener('input', (e)=>{
+        let userName = e.target.value;
+              
+        if(userName !== ''){
+            userNameEmpty = false;
+            if(!passwordEmpty)
+                button.removeAttribute("disabled");
+
+        }
+
+        if(userName === ''){
+            button.setAttribute("disabled","true");
+            userNameEmpty = true;
+        }
+    });
+
+    password.addEventListener('input', (e)=>{
+        let password = e.target.value;
+              
+        if(passwordEmpty !== ''){
+            passwordEmpty = false;
+            if(!userNameEmpty)
+                button.removeAttribute("disabled");
+        }
+
+        if(password === ''){
+            button.setAttribute("disabled","true");
+            passwordEmpty = true;
+        }
+    })
+</script>
+
+<%- include('partials/footer'); %>

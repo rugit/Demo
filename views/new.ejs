@@ -1,0 +1,49 @@
+<%- include('partials/header'); %>
+<div class="container">
+    <div class="row">
+        <h1 style="text-align: center; font-weight: 700;">Insert details of New Semester</h1>
+        <div style="width: 40%; margin: 0 auto">
+            <form action="/semesters" method="POST">
+                <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
+                    <label for="semester" style="width:30%; font-size: x-large;">Semester</label>
+                    <input class="form-control" type="text" name="semester" placeholder="1" style="width:15%">
+                </div>
+                <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
+                    <label style="width:30%; font-size: x-large; text-align: center;">Subject</label>
+                    <label style="width:30%; font-size: x-large; text-align: right;">Score</label>
+                </div>
+                <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
+                    <input class="form-control" type="text" name="subject" placeholder="English">
+                    <input class="form-control" inputmode="numeric" name="subject_score" placeholder="80" style="width:15%;">    
+                </div>
+                <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
+                    <input class="form-control" type="text" name="subject" placeholder="English">
+                    <input class="form-control" inputmode="numeric"  name="subject_score" placeholder="80" style="width:15%">    
+                </div>
+                <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
+                    <input class="form-control" type="text" name="subject" placeholder="English">
+                    <input class="form-control" inputmode="numeric"  name="subject_score" placeholder="80" style="width:15%">    
+                </div>
+                <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
+                    <input class="form-control" type="text" name="subject" placeholder="English">
+                    <input class="form-control" inputmode="numeric"  name="subject_score" placeholder="80" style="width:15%">    
+                </div>
+                <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
+                    <input class="form-control" type="text" name="subject" placeholder="English">
+                    <input class="form-control" inputmode="numeric"  name="subject_score" placeholder="80" style="width:15%">    
+                </div>
+                
+                <button class="btn btn-lg btn-default btn-primary btn-block">Submit</button>
+            </form>
+            <a href="/semesters">Go back</a> 
+        </div>
+        
+        
+               
+    </div>
+</div>
+
+
+
+
+<%- include('partials/footer'); %>
