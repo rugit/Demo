@@ -1,51 +1,20 @@
-var express     = require("express"),
-    app         = express(),
-    bodyParser  = require("body-parser"),
-    mongoose    = require("mongoose")
+var express         = require("express"),
+    app             = express(),
+    bodyParser      = require("body-parser"),
+    mongoose        = require("mongoose"),
+    passport        = require("passport"),
+    LocalStrategy   = require("passport-local"),
+    Semester        = require("./models/semester"),
+    User            = require("./models/user"),           
+    seedDB          = require("./seed");
 
 mongoose.connect("mongodb://localhost/demo");    
 
+seedDB();
+
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
-
-// SCHEMA SETUP
-var semesterSchema = new mongoose.Schema({
-    semester: Number,
-    subject : {}
-});
-
-var Semester = mongoose.model("Semester", semesterSchema);
-
-// Semester.create(
-//     {   
-//         semester: 1, 
-//         subject : {English : 80, Maths: 30, Science: 70, Computer: 90}
-    
-//     },(err, semester)=>{
-//         if(err)
-//             console.log(err);
-//         else{
-//             console.log("Created New Semester");
-//             console.log(semester);
-//         }
-//     })
-
-//     Semester.create(
-//         {   
-//             semester: 1, 
-//             subject : {English : 80, Maths: 30, Science: 70, Computer: 90}
-        
-//         },(err, semester)=>{
-//             if(err)
-//                 console.log(err);
-//             else{
-//                 console.log("Created New Semester");
-//                 console.log(semester);
-//             }
-//         })
-
-
-
 
 
 
@@ -60,25 +29,15 @@ app.get("/login", (req,res)=>{
     res.render("login");
 });
 
-//temp database
-var semesters = [
-    {semester: 1, subject : {English : 80, Maths: 30, Science: 70, Computer: 90}},
-    {semester: 2, subject : {English : 20, Maths: 50, Science: 60, Computer: 70}},
-    {semester: 3, subject : {English : 90, Maths: 90, Science: 100, Computer: 100}},
-    {semester: 3, subject : {English : 90, Maths: 90, Science: 100, Computer: 100}},
-    {semester: 3, subject : {English : 90, Maths: 90, Science: 100, Computer: 100}},
-    {semester: 3, subject : {English : 90, Maths: 90, Science: 100, Computer: 100}}
 
-]
-
-//display semester details - INDEX
+//display all semester details - INDEX
 app.get("/semesters",(req, res)=>{
     Semester.find({}, (err, allSemesters)=>{
         if(err)
             console.log(err);
         else{
             sortByKey(allSemesters, "semester");
-            res.render("semesters",{semesters:allSemesters});
+            res.render("index",{semesters:allSemesters});
         }
     })
     
@@ -113,8 +72,16 @@ app.post("/semesters", (req, res)=>{
 
 //show semester Details - SHOW
 app.get("/semesters/:id", (req,res)=>{
-    res.send("SHOW SEMESTER DETAILS");
+    Semester.findById(req.params.id, (err, foundSemester)=>{
+        if(err)
+            console.log(err);
+        else{
+            res.render("show", {semester: foundSemester});
+        }
+    });
 });
+
+
 
 
 
