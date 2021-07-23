@@ -4,5 +4,8 @@
 <h1>Semester <%= semester.semester%> Result</h1>
 
 <p><%= semester%></p>
-
+<a class="btn btn-warning" href="/semesters/<%= semester._id%>/edit">EDIT</a>
+<form action="/semesters/<%= semester._id%>?_method=DELETE" method="POST" style="display: inline">
+    <button class="btn btn-danger">Delete</button>
+</form>
 <%- include('../partials/footer'); %>
