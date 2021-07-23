@@ -1,11 +1,10 @@
-<%- include('partials/header'); %>
-
+<%- include('../partials/header'); %>
 
 <div class="container" style="margin-top: 1rem;">
     <header class="jumbotron">
         <div class="container">
-            <h1>Welcome Temp</h1>
-            <p>Check your Semester Result</p>
+            <h1 class="display-1"> <small class="text-muted">Welcome</small> <%= currentUser.username%></h1>
+            <p>Dashboard</p>
             <p>
                 <a class="btn btn-primary btn-sm" href="/semesters/new">Add New Semester Details</a>
             </p>
@@ -31,4 +30,4 @@
     </div>
 <div class="container">
 
-<%- include('partials/footer'); %>
+<%- include('../partials/footer'); %>

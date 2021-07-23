@@ -1,16 +1,16 @@
-<%- include('partials/header'); %>
+<%- include('../partials/header'); %>
 
 <div id="alert" class="container">
 </div>
 
 <div class="container">
     <div class="row">
-        <h1 style="text-align: center; font-weight: 700; margin-bottom: 40px;">Insert details of New Semester</h1>
-        <div style="width: 40%; margin: 0 auto">
+        <h1 style="text-align: center;">Insert details of New Semester</h1>
+        <div style="width: 30%; margin: 25px auto">
             <form id="form" action="/semesters" method="POST">
                 <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
                     <label for="semester" style="width:30%; font-size: x-large;">Semester</label>
-                    <input class="form-control" type="text" name="semester" placeholder="1" style="width:15%" onkeydown="validateSemester(this)">
+                    <input class="form-control" type="number" name="semester" placeholder="1" style="width:15%" required onkeydown="validateSemester(this)">
                 </div>
                 <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
                     <label style="width:30%; font-size: x-large; text-align: center;" >Subject</label>
@@ -18,22 +18,23 @@
                     <input class="deleteButton btn btn-xs btn-danger" type="button" value="Delete" style="visibility: hidden;" disabled>
                 </div>
                 <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
-                    <input class="form-control" type="text" name="subject" placeholder="Subject Name" onkeydown="upperCaseF(this)">
-                    <input class="form-control" type="number" name="subject_score" placeholder="80" style="width:15%" onkeydown="validateScore(this)">   
+                    <input class="form-control" type="text" name="subject" placeholder="Subject Name" required onkeydown="upperCaseF(this) ">
+                    <input class="form-control" type="number" name="subject_score" placeholder="80" style="width:15%" required onkeydown="validateScore(this)" onkeyup="checkTextInputsValue()" >   
                     <input class="deleteButton btn btn-xs btn-danger" type="button" value="Delete" style="visibility: hidden;" disabled> 
                 </div>
                 <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
-                    <input class="form-control" type="text" name="subject" placeholder="Subject Name" onkeydown="upperCaseF(this)">
-                    <input class="form-control" type="number" name="subject_score" placeholder="80" style="width:15%" onkeydown="validateScore(this)">   
+                    <input class="form-control" type="text" name="subject" placeholder="Subject Name" required onkeydown="upperCaseF(this)">
+                    <input class="form-control" type="number" name="subject_score" placeholder="80" style="width:15%"  required onkeydown="validateScore(this)" onkeyup="checkTextInputsValue()" >   
                     <input class="deleteButton btn btn-xs btn-danger" type="button" value="Delete" style="visibility: hidden;" disabled> 
                 </div>
                 <div class="addButton form-group" >
 					<input class="btn btn-success btn-sm btn-block" type="button" value="Add subject">
                 </div>
-                
-                <button class="btn btn-lg btn-default btn-primary btn-block">Submit</button>
+                <div class="form-group">
+                    <button class="btn btn-lg btn-default btn-primary btn-block">Submit</button>
+                </div>    
             </form>
-            <a href="/semesters">Go back</a> 
+            <a href="/semesters" >Go Back</a> 
         </div>
         
         
@@ -44,15 +45,24 @@
 <script>
     $("form").on("click", ".addButton", function(event){
         $(".addButton").before("<div class=\"form-inline form-group\" style=\"display: flex; justify-content: space-between;\">");
-        $(".addButton").prev().append("<input class=\"form-control\" type=\"text\" name=\"subject\" placeholder=\"Subject Name\" onkeydown=\"upperCaseF(this)\">");
-        $(".addButton").prev().append("<input class=\"form-control\" type=\"number\" name=\"subject_score\" placeholder=\"80\" style=\"width:15%\" onkeydown=\"validateScore(this)\">");
+        $(".addButton").prev().append("<input class=\"form-control\" type=\"text\" name=\"subject\" placeholder=\"Subject Name\" required onkeydown=\"upperCaseF(this)\" onkeyup=\"checkTextInputsValue()\">");
+        $(".addButton").prev().append("<input class=\"form-control\" type=\"number\" name=\"subject_score\" placeholder=\"80\" style=\"width:15%\"  required onkeydown=\"validateScore(this)\">");
         $(".addButton").prev().append("<input class=\"deleteButton btn btn-xs btn-danger\" type=\"button\" value=\"Delete\" >");
     });
 
     //Convert subject name to uppercase
     function upperCaseF(a){
    		setTimeout(function(){
-        	a.value = a.value.toUpperCase();
+            var letters = /^[A-Za-z0-9]+$/;
+            if(!a.value.match(letters) && a.value !== ""){
+                if(($("#subject_name_error").length)==0)
+                    $("#alert").append("<div id=\"subject_name_error\" class=\"alert alert-danger\" role=\"alert\">Subject name must contain alphanumeric characters only</div>");
+            }
+            else{
+                $("#subject_name_error").remove();
+                a.value = a.value.toUpperCase();
+            } 
+        	
     	}, 1);
        }
 
@@ -84,6 +94,32 @@
 
     }
 
+    //check if the values of text input is same or not
+    function checkTextInputsValue(){
+
+        setTimeout(function(){
+            var tempObject = {};
+            var list = $("#form :input[type='text']");
+
+            list.each(function(e){
+                console.log($(this)[0].value);
+                if($(this)[0].value !== ""){
+                    tempObject[$(this)[0].value] = (tempObject[$(this)[0].value] || 0) + 1;
+                    if(tempObject[$(this)[0].value]>1){
+                        if($("#subject_error").length==0)
+                            $("#alert").append("<div id=\"subject_error\" class=\"alert alert-danger\" role=\"alert\">Subject Name must be Unique");
+                    }
+                    else{
+                        $("#subject_error").remove();
+                    }
+                }
+            });
+            console.log(tempObject);
+
+        },1);
+
+    };
+
     //button to delete the subject entry
     $("form").on("click", ".deleteButton", function(event){
    		$(this).parent().remove();
@@ -92,4 +128,4 @@
 </script>
 
 
-<%- include('partials/footer'); %>
+<%- include('../partials/footer'); %>
