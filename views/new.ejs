@@ -1,36 +1,31 @@
 <%- include('partials/header'); %>
+
+<div id="alert" class="container">
+</div>
+
 <div class="container">
     <div class="row">
-        <h1 style="text-align: center; font-weight: 700;">Insert details of New Semester</h1>
+        <h1 style="text-align: center; font-weight: 700; margin-bottom: 40px;">Insert details of New Semester</h1>
         <div style="width: 40%; margin: 0 auto">
-            <form action="/semesters" method="POST">
+            <form id="form" action="/semesters" method="POST">
                 <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
                     <label for="semester" style="width:30%; font-size: x-large;">Semester</label>
                     <input class="form-control" type="text" name="semester" placeholder="1" style="width:15%">
                 </div>
                 <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
-                    <label style="width:30%; font-size: x-large; text-align: center;">Subject</label>
+                    <label style="width:30%; font-size: x-large; text-align: center;" >Subject</label>
                     <label style="width:30%; font-size: x-large; text-align: right;">Score</label>
+                    <input class="deleteButton btn btn-xs btn-danger" type="button" value="Delete" style="visibility: hidden;" disabled>
                 </div>
                 <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
-                    <input class="form-control" type="text" name="subject" placeholder="English">
-                    <input class="form-control" inputmode="numeric" name="subject_score" placeholder="80" style="width:15%;">    
+                    <input class="form-control" type="text" name="subject" placeholder="Subject Name" onkeydown="upperCaseF(this)">
+                    <input class="form-control" type="number" name="subject_score" placeholder="80" style="width:15%" onkeydown="validateScore(this)">   
+                    <input class="deleteButton btn btn-xs btn-danger" type="button" value="Delete" style="visibility: hidden;" disabled> 
                 </div>
-                <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
-                    <input class="form-control" type="text" name="subject" placeholder="English">
-                    <input class="form-control" inputmode="numeric"  name="subject_score" placeholder="80" style="width:15%">    
-                </div>
-                <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
-                    <input class="form-control" type="text" name="subject" placeholder="English">
-                    <input class="form-control" inputmode="numeric"  name="subject_score" placeholder="80" style="width:15%">    
-                </div>
-                <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
-                    <input class="form-control" type="text" name="subject" placeholder="English">
-                    <input class="form-control" inputmode="numeric"  name="subject_score" placeholder="80" style="width:15%">    
-                </div>
-                <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
-                    <input class="form-control" type="text" name="subject" placeholder="English">
-                    <input class="form-control" inputmode="numeric"  name="subject_score" placeholder="80" style="width:15%">    
+                
+
+                <div class="addButton form-group" >
+					<input class="btn btn-success btn-sm btn-block" type="button" value="Add subject">
                 </div>
                 
                 <button class="btn btn-lg btn-default btn-primary btn-block">Submit</button>
@@ -43,7 +38,40 @@
     </div>
 </div>
 
+<script>
+    $("form").on("click", ".addButton", function(event){
+        $(".addButton").before("<div class=\"form-inline form-group\" style=\"display: flex; justify-content: space-between;\">");
+        $(".addButton").prev().append("<input class=\"form-control\" type=\"text\" name=\"subject\" placeholder=\"Subject Name\" onkeydown=\"upperCaseF(this)\">");
+        $(".addButton").prev().append("<input class=\"form-control\" inputmode=\"numeric\" name=\"subject_score\" placeholder=\"80\" style=\"width:15%;\">");
+        $(".addButton").prev().append(" <input class=\"deleteButton btn btn-xs btn-danger\" type=\"button\" value=\"Delete\" >");
+    });
 
+    //Convert subject name to uppercase
+    function upperCaseF(a){
+   		setTimeout(function(){
+        	a.value = a.value.toUpperCase();
+    	}, 1);
+       }
+
+    //Check if the score is between range 0 to 100
+    function validateScore(score){
+        setTimeout(function(){
+            if((score.value<0 || score.value> 100) ){
+                if(($(".alert").length)==0)
+                    $("#alert").append("<div id=\"error\" class=\"alert alert-danger\" role=\"alert\">Score should be in the range 0-100</div>")
+            }
+            else{
+                $(".alert").remove();
+            }
+        },1);
+    }
+
+    //button to delete the subject entry
+    $("form").on("click", ".deleteButton", function(event){
+   		$(this).parent().remove();
+   		event.stopPropagation();
+   	});
+</script>
 
 
 <%- include('partials/footer'); %>

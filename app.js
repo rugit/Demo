@@ -1,14 +1,61 @@
-var express = require("express");
-var app = express();
-var bodyParser = require("body-parser");
+var express     = require("express"),
+    app         = express(),
+    bodyParser  = require("body-parser"),
+    mongoose    = require("mongoose")
+
+mongoose.connect("mongodb://localhost/demo");    
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
+// SCHEMA SETUP
+var semesterSchema = new mongoose.Schema({
+    semester: Number,
+    subject : {}
+});
+
+var Semester = mongoose.model("Semester", semesterSchema);
+
+// Semester.create(
+//     {   
+//         semester: 1, 
+//         subject : {English : 80, Maths: 30, Science: 70, Computer: 90}
+    
+//     },(err, semester)=>{
+//         if(err)
+//             console.log(err);
+//         else{
+//             console.log("Created New Semester");
+//             console.log(semester);
+//         }
+//     })
+
+//     Semester.create(
+//         {   
+//             semester: 1, 
+//             subject : {English : 80, Maths: 30, Science: 70, Computer: 90}
+        
+//         },(err, semester)=>{
+//             if(err)
+//                 console.log(err);
+//             else{
+//                 console.log("Created New Semester");
+//                 console.log(semester);
+//             }
+//         })
+
+
+
+
+
+
+
+//landing route
 app.get("/", (req, res)=>{
     res.render("login");
 });
 
+//login route
 app.get("/login", (req,res)=>{
     res.render("login");
 });
@@ -24,12 +71,26 @@ var semesters = [
 
 ]
 
-//display semester details
+//display semester details - INDEX
 app.get("/semesters",(req, res)=>{
-    res.render("semesters",{semesters:semesters});
+    Semester.find({}, (err, allSemesters)=>{
+        if(err)
+            console.log(err);
+        else{
+            sortByKey(allSemesters, "semester");
+            res.render("semesters",{semesters:allSemesters});
+        }
+    })
+    
 });
 
-//add semester details to database
+//add semester details - NEW
+app.get("/semesters/new",(req,res)=>{
+    res.render("new.ejs");
+})
+
+
+//add semester details to database - CREATE
 app.post("/semesters", (req, res)=>{
     var semester = req.body.semester;
     var subject = {};
@@ -39,19 +100,32 @@ app.post("/semesters", (req, res)=>{
         
     });
 
-    console.log(subject);
-
+    //create new Semester and add it to the database
     var newSemester = {semester: semester, subject: subject};
-    semesters.push(newSemester);
-    
-    res.redirect("/semesters");
-
+    Semester.create(newSemester, (err, newlyCreated)=>{
+        if(err)
+            console.log(err);
+        else{
+            res.redirect("/semesters");
+        }
+    })
 });
 
-//add semester details
-app.get("/semesters/new",(req,res)=>{
-    res.render("new.ejs");
-})
+//show semester Details - SHOW
+app.get("/semesters/:id", (req,res)=>{
+    res.send("SHOW SEMESTER DETAILS");
+});
+
+
+
+//Functions 
+function sortByKey(array, key) {
+    return array.sort(function(a, b) {
+        var x = a[key]; var y = b[key];
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    });
+}
+
 
 //url: localhost:3000
 app.listen(3000,()=>{
