@@ -133,6 +133,7 @@ router.put("/semesters/:id",(req, res)=>{
             console.log(err);
         else{
             console.log(Semester);
+            req.flash("success", `Semester ${Semester.semester} details sucessfully edited!`);
             res.redirect("/semesters/"+ req.params.id);
         }
     });
