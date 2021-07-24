@@ -14,7 +14,7 @@ var semesterRoutes  = require("./routes/semesters"),
     indexRoutes     = require("./routes/index");
 
 
-mongoose.connect("mongodb://localhost/demo");    
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/demo");    
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(methodOverride("_method"));
