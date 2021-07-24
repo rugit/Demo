@@ -1,0 +1,68 @@
+<%- include('partials/header'); %>
+<div class="container" style="margin-top: 1rem;">
+    <header class="jumbotron">
+        <div class="container">
+            <h1 class="display-1"> Performance Graph</h1>
+        </div>
+    </header>
+    <div style="margin-bottom: 50px;" >
+        <canvas id="myChart"></canvas>
+    </div>
+    <a href="/semesters">Go Back</a>
+</div>
+ 
+ <%
+    function calculatePercentage(scores){
+        return scores.reduce((a, b)=> a+b, 0)/(scores.length * 100)*100;
+    }
+ %>
+ 
+ <script>
+    var percentages = [];
+    var semesters = [];
+
+    <% semesters.forEach(function(semester){ %>
+        percentages.push(<%= calculatePercentage(Object.values(semester.subject))%>);
+        semesters.push(<%= semester.semester%>);
+    <%});%>
+
+    for(i=0; i<semesters.length; i++){
+        semesters[i] = "Semester "+semesters[i];
+    }
+
+    
+
+    var ctx = document.getElementById("myChart");
+    var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: semesters,
+        datasets: [{
+            label: 'Semester',
+            data: percentages,
+            fill: false,
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: {
+                title: {
+                    display: true,
+                    text: 'Percentage'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+
+
+ </script>
+ 
+

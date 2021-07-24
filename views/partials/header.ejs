@@ -6,6 +6,7 @@
         <title>Demo</title> 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <style type="text/css">
             input::-webkit-outer-spin-button,
             input::-webkit-inner-spin-button {
@@ -22,29 +23,59 @@
                 left: 0;
                 bottom: 0;
                 width: 100%;
+                padding: 1.5rem;
                 background-color: rgba(241, 236, 236, 0.87);
                 color: white;
                 text-align: center;
             }
+            .my-glyphicon{
+                top: 0px;
+                padding: 1rem;
+                background-color: #ddd;
+                border-radius: 50%;
+            }
+            .my-card{
+                background-color: rgba(238, 238, 238, 0.39);
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+                border-radius: .5rem;
+            }
+            .my-icon{
+                width: 7rem;
+                height: 7rem;
+                padding: .25rem;
+                margin:auto;
+                border: 1px solid rgba(15, 15, 15, 0.527);
+                border-radius: 50%;
+                display:flex;
+                justify-content: center;
+                align-items:center;
+            }
+            .glyphicon{
+                font-size: 35px;
+            }
+            
+
 	</style>
     </head>
     <body>
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="/">Demo</a>
+                    <a class="navbar-brand glyphicon glyphicon-globe" href="/"></a>
+                    <a href="/" class="navbar-brand">DEMO</a>
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class=" nav navbar-nav navbar-right">
                         <% if(!currentUser){ %>
-                            <% if(currentPath == "/login") { %>
+                            <!-- <% if(currentPath == "/login") { %>
                                 <li><a href="/register">Sign Up</a></li>
-                            <% } %>
+                            <% } %> -->
                             <% if(currentPath == "/register") { %>
                                 <li><a href="/login">Login</a></li>
                             <% } %>
                         <% } else{ %> 
-                            <li><a href="/semesters"><strong style="font-size: 20px;"><%= currentUser.username%></strong></a></li>
+                            <li><a href="#" style="pointer-events: none;"><strong style="font-size: 20px;"><%= currentUser.username%></strong></a></li>
                             <li><a href="/logout">Logout</a></li>
                         <% } %>
                     </ul>

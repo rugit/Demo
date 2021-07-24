@@ -1,7 +1,27 @@
 var express     = require("express"),
     router      = express.Router(),
-    Semester    = require("../models/semester"),
+    Semester    = require("../models/semester")
     User        = require("../models/user");
+
+
+
+//graph route
+router.get("/graph",isLoggedIn, (req, res)=>{
+    var userName = req.user.username;
+
+    Semester.find({"user.username": userName}, (err, allSemesters)=>{
+        if(err)
+            console.log(err);
+        else{
+            sortByKey(allSemesters, "semester");
+            res.render("graph",{semesters:allSemesters});
+        }
+    });
+})
+
+
+
+
 
 // ============================
 //  User Semester Detail Route
@@ -18,7 +38,7 @@ router.get("/semesters", isLoggedIn, (req, res)=>{
             sortByKey(allSemesters, "semester");
             res.render("semesters/index",{semesters:allSemesters});
         }
-    })
+    });
     
 });
 
@@ -34,7 +54,7 @@ router.post("/semesters", isLoggedIn, (req, res)=>{
     var subject = {};
 
     (req.body.subject).forEach((key,i) => {
-        subject[key] = req.body.subject_score[i];
+        subject[key] = Number(req.body.subject_score[i]);
         
     });
 
@@ -49,7 +69,7 @@ router.post("/semesters", isLoggedIn, (req, res)=>{
                     console.log(err)
                 else{
                     if(semester){
-                        console.log(`Semester ${semester.semester} Data is already in Database`);
+                        req.flash("error", `Semester ${semester.semester} data is already in Database`);
                         return res.redirect("/semesters/new");
                     }
                     Semester.create(newSemester, (err, semester)=>{
@@ -59,6 +79,7 @@ router.post("/semesters", isLoggedIn, (req, res)=>{
                             semester.user.id = user._id;
                             semester.user.username = user.username;
                             semester.save();
+                            req.flash("success", `Semester ${semester.semester} details added successfully`);
                             res.redirect("/semesters");
                         }
                             
@@ -100,7 +121,7 @@ router.put("/semesters/:id",(req, res)=>{
     var subject = {};
 
     (req.body.subject).forEach((key,i) => {
-        subject[key] = req.body.subject_score[i];
+        subject[key] = Number(req.body.subject_score[i]);
         
     });
 
@@ -120,10 +141,11 @@ router.put("/semesters/:id",(req, res)=>{
 //delete semester route
 
 router.delete("/semesters/:id",(req, res)=>{
-    Semester.findByIdAndRemove(req.params.id, (err)=>{
+    Semester.findByIdAndRemove(req.params.id, (err, deletedSemester)=>{
         if(err)
             console.log(err);
         else
+            req.flash("success", `Semester ${deletedSemester.semester} removed from database`);
             res.redirect("/semesters");
     });
 });

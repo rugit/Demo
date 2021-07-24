@@ -1,5 +1,6 @@
 var express     = require("express"),
     router      = express.Router(),
+    Semester    = require("../models/semester"),
     User        = require("../models/user"),
     passport    = require("passport");
 
@@ -11,6 +12,8 @@ router.get("/", (req, res)=>{
     else
         res.redirect("/login");
 });
+
+
 
 // =============
 //  AUTH ROUTES

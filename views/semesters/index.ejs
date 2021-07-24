@@ -5,28 +5,25 @@
         <div class="container">
             <h1 class="display-1"> <small class="text-muted">Welcome</small> <%= currentUser.username%></h1>
             <p>Dashboard</p>
-            <p>
-                <a class="btn btn-primary btn-lg" href="/semesters/new">Add New Semester Details</a>
-            </p>
+            <a class="btn btn-primary btn-sm" href="/semesters/new">Add New Semester </a>
+            <%if(semesters.length>1){%>
+                <a class="btn btn-warning btn-sm" href="/graph">Performace Graph</a>
+            <%}%>
         </div>
     </header>
 
-    <div class="row" style="display:flex; flex-wrap:wrap;">
+    <div class="row text-center" style="display:flex; flex-wrap:wrap;">
         <% semesters.forEach(function(semester){ %>
             <div class="col-md-3 col-sm-6" style="margin-top: 2rem;">
-                <div class="thumbnail">
-                    <div class="card">
-                        <div class="card-body" style="text-align: center;">
-                            <h2>Semester <%= semester.semester%></h2>
-                            <a href="/semesters/<%= semester._id %>" class="card-link btn btn-primary">View Result</a>
-                        </div>
+                <div class="my-card">
+                    <div class="my-icon">
+                        <div class="my-glyphicon glyphicon glyphicon-floppy-disk"></div>
                     </div>
+                    <h3>Semester <%= semester.semester%></h3>
+                    <a href="/semesters/<%= semester._id %>" class="btn btn-default">View Result</a>
                 </div>
-                
-                
             </div>
         <% }); %>
     </div>
 </div>
 
-<%- include('../partials/footer'); %>

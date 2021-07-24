@@ -1,11 +1,215 @@
-<%- include('../partials/header'); %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Demo</title> 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+        <style type="text/css">
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+            }
 
+            /* Firefox */
+            input[type=number] {
+            -moz-appearance: textfield;
+            }
+            footer {
+                position: fixed;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                background-color: rgba(241, 236, 236, 0.87);
+                color: white;
+                text-align: center;
+            }
+            .table{
+                width: 50%;
+                margin: 20px auto;
+                text-align: center;
+            }
+            .table-head{
+                text-align: center;
+            }
+            .marks-col{
+                width:20%;
+            }
+            .grade-col{
+                width:20%;
+            }
+            .thead-dark{
+                background-color: rgb(43, 43, 43);
+                color:aliceblue;
+            }
+            .divide{
+                border-top: 2px solid black;
+            }
+            .passed{
+                background-color: rgb(38, 197, 38);
+                color: white;
+            }
+            .failed{
+                background-color: rgb(221, 21, 21);
+                color: white;
+            }
+            .glyphicon{
+                font-size: 35px;
+            }
+	    </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="my-brand navbar-brand glyphicon glyphicon-globe" href="/"></a>
+                    <a href="/" class="navbar-brand">DEMO</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class=" nav navbar-nav navbar-right">
+                        <% if(!currentUser){ %>
+                            <% if(currentPath == "/login") { %>
+                                <li><a href="/register">Sign Up</a></li>
+                            <% } %>
+                            <% if(currentPath == "/register") { %>
+                                <li><a href="/login">Login</a></li>
+                            <% } %>
+                        <% } else{ %> 
+                            <li><a href="#" style="pointer-events: none;"><strong style="font-size: 20px;"><%= currentUser.username%></strong></a></li>
+                            <li><a href="/logout">Logout</a></li>
+                        <% } %>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <% if(error && error.length>0) {%>
+                <div class="alert alert-danger" role="alert">
+                    <%=error%>
+                </div>
+            <%}%>
+            <% if(success && success.length>0) {%>
+                <div class="alert alert-success" role="alert">
+                    <%=success%>
+                </div>
+            <%}%>
+        </div>
 
-<h1>Semester <%= semester.semester%> Result</h1>
+        <%#Functions%>
+        <%
+            function calculateGrade(score){
+                if(score>=95)
+                    return "O";
+                else if(score<95 && score>=85)
+                    return "E";
+                else if(score<85 && score>=75)
+                    return "A+";
+                else if(score<75 && score>=60)
+                    return "A";
+                else if(score<60 && score>=50)
+                    return "B+";
+                else if(score<50 && score>=40)
+                    return "B";
+                else
+                    return "F";
+            }
 
-<p><%= semester%></p>
-<a class="btn btn-warning" href="/semesters/<%= semester._id%>/edit">EDIT</a>
-<form action="/semesters/<%= semester._id%>?_method=DELETE" method="POST" style="display: inline">
-    <button class="btn btn-danger">Delete</button>
-</form>
+            function calculateRemark(score){
+                if(score>=95)
+                    return "Outstanding";
+                else if(score<95 && score>=85)
+                    return "Excellent";
+                else if(score<85 && score>=75)
+                    return "Very Good";
+                else if(score<75 && score>=60)
+                    return "Good";
+                else if(score<60 && score>=50)
+                    return "Average";
+                else if(score<50 && score>=40)
+                    return "Below Average";
+                else
+                    return "Failed";
+            }
+
+            function calculateTotal(scores){
+                return scores.reduce((a, b)=> a+b, 0);
+            }
+            
+            function calculatePercentage(scores){
+                return scores.reduce((a, b)=> a+b, 0)/(scores.length * 100)*100;
+            }
+
+            function calculateCGPA(scores){
+                return scores.reduce((a, b)=> a+b, 0)/(scores.length * 100)*10;
+            }
+        
+            function passedOrFailed(scores){
+                const func = (value)=> value>40;
+                return scores.every(func);
+                
+            }
+        
+        
+        %>
+    
+        <div class="container">
+            <header class="jumbotron">
+                <div>
+                    <h1><strong>Semester <%= semester.semester%> </strong>Result</h1>
+                        <a class="btn btn-warning" href="/semesters/<%= semester._id%>/edit">EDIT</a>
+                        <form action="/semesters/<%= semester._id%>?_method=DELETE" method="POST" style="display: inline">
+                            <button class="btn btn-danger">Delete</button>
+                        </form>
+                </div>
+            </header>
+        </div>
+        <div class="container">
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                <tr>
+                    <th class= "table-head" scope="col">Subject</th>
+                    <th class= "table-head marks-col" scope="col">Score</th>
+                    <th class= "table-head grade-col" scope="col">Grade</th>
+                    <th class= "table-head" scope="col">Remarks</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <% for(subject in semester.subject){%>
+                        <tr>
+                            <td><%= subject %></td>
+                            <td class= "marks-col" ><%= semester.subject[subject]%></td>
+                            <td class= "grade-col"><%= calculateGrade(semester.subject[subject])%></td>
+                            <td><%= calculateRemark(semester.subject[subject])%></td>
+                        </tr>
+                    <%}%>
+                    <tr class= "divide">
+                        <td ><strong>Total Score</strong></td>
+                        <td class= "marks-col"><%= calculateTotal(Object.values(semester.subject))%></td>
+                        <td style="border: none;"><strong>Out of <%= Object.keys(semester.subject).length * 100%></strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Percentage</strong></td>
+                        <td class= "marks-col" ><%= calculatePercentage(Object.values(semester.subject)).toFixed()%>%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CGPA</strong></td>
+                        <td class= "marks-col" ><%= calculateCGPA(Object.values(semester.subject)).toFixed(1)%> </td>
+                        <td style="border: none;"><strong>Out of 10</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Result</strong></td>
+                        <% if (passedOrFailed(Object.values(semester.subject))) {%>
+                            <td class= "marks-col passed">Passed</td>
+                        <% } else {%>
+                            <td class= "marks-col failed">Failed</td>
+                        <%}%>
+                    </tr>
+                </tbody>
+            </table>
+            <a href="/semesters">Go Back</a>
+        </div>
+        
+
 <%- include('../partials/footer'); %>

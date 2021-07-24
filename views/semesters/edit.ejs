@@ -10,7 +10,7 @@
             <form id="form" action="/semesters/<%= semester._id%>?_method=PUT" method="POST">
                 <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
                     <label for="semester" style="width:30%; font-size: x-large;">Semester</label>
-                    <input class="form-control" type="number" name="semester" placeholder="1" style="width:15%" required onkeydown="validateSemester(this)" value="<%= semester.semester%>">
+                    <input class="form-control" type="number" name="semester" placeholder="1" style="width:15%" readonly value="<%= semester.semester%>">
                 </div>
                   
                 <div class="form-inline form-group" style="display: flex; justify-content: space-between;">
@@ -35,7 +35,7 @@
 					<input class="btn btn-success btn-sm btn-block" type="button" value="Add subject">
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-lg btn-default btn-primary btn-block">Submit</button>
+                    <button id="button" class="btn btn-lg btn-default btn-primary btn-block">Submit</button>
                 </div>    
             </form>
             <a href="/semesters/<%= semester._id%>" >Go Back</a> 
@@ -47,6 +47,13 @@
 </div>
 
 <script>
+
+
+    var isSubjectAlphanumeric = true;
+    var scoreValidated = true;
+    var isSemesterValid = true;
+    var isInputUnique = true;
+
     $("form").on("click", ".addButton", function(event){
         $(".addButton").before("<div class=\"form-inline form-group\" style=\"display: flex; justify-content: space-between;\">");
         $(".addButton").prev().append("<input class=\"form-control\" type=\"text\" name=\"subject\" placeholder=\"Subject Name\" style=\"width:40%\" required onkeydown=\"upperCaseF(this)\" onkeyup=\"checkTextInputsValue()\" style=\"width:40%\" >");
@@ -59,14 +66,16 @@
    		setTimeout(function(){
             var letters = /^[A-Za-z0-9]+$/;
             if(!a.value.match(letters) && a.value !== ""){
-                if(($("#subject_name_error").length)==0)
-                    $("#alert").append("<div id=\"subject_name_error\" class=\"alert alert-danger\" role=\"alert\">Subject name must contain alphanumeric characters only</div>");
+                $("#subject_name_error").remove();
+                $("#alert").append("<div id=\"subject_name_error\" class=\"alert alert-danger\" role=\"alert\">Subject name must contain alphanumeric characters only</div>");
+                isSubjectAlphanumeric = false;
             }
             else{
+                isSubjectAlphanumeric = true;
                 $("#subject_name_error").remove();
                 a.value = a.value.toUpperCase();
             } 
-        	
+            enableSubmit();
     	}, 1);
        }
 
@@ -74,12 +83,15 @@
     function validateScore(score){
         setTimeout(function(){
             if((score.value<0 || score.value> 100) ){
-                if(($("#error").length)==0)
-                    $("#alert").append("<div id=\"error\" class=\"alert alert-danger\" role=\"alert\">Score should be in the range 0-100</div>");
+                scoreValidated = false;
+                $("#error").remove();
+                $("#alert").append("<div id=\"error\" class=\"alert alert-danger\" role=\"alert\">Score should be in the range 0-100</div>");
             }
             else{
+                scoreValidated = true;
                 $("#error").remove();
             }
+            enableSubmit();
         },1);
     }
 
@@ -88,41 +100,54 @@
     function validateSemester(semester){
         setTimeout(function(){
             if( (semester.value<=0 || semester.value=="-") && semester.value!='' ){
-                if($("#semester_error").length==0)
-                    $("#alert").append("<div id=\"semester_error\" class=\"alert alert-danger\" role=\"alert\">Semester must be greater than 0");
+                isSemesterValid = false;
+                $("#semester_error").remove();
+                $("#alert").append("<div id=\"semester_error\" class=\"alert alert-danger\" role=\"alert\">Semester must be greater than 0");
             }
             else{
+                isSemesterValid = true;
                 $("#semester_error").remove();
             }
+            enableSubmit();
         },1);
 
     }
 
     //check if the values of text input is same or not
     function checkTextInputsValue(){
-
         setTimeout(function(){
             var tempObject = {};
             var list = $("#form :input[type='text']");
 
             list.each(function(e){
-                console.log($(this)[0].value);
                 if($(this)[0].value !== ""){
                     tempObject[$(this)[0].value] = (tempObject[$(this)[0].value] || 0) + 1;
                     if(tempObject[$(this)[0].value]>1){
-                        if($("#subject_error").length==0)
-                            $("#alert").append("<div id=\"subject_error\" class=\"alert alert-danger\" role=\"alert\">Subject Name must be Unique");
+                        isInputUnique = false;
+                        $("#subject_error").remove();
+                        $("#alert").append("<div id=\"subject_error\" class=\"alert alert-danger\" role=\"alert\">Subject Name must be Unique");
                     }
                     else{
+                        isInputUnique = true;
                         $("#subject_error").remove();
                     }
                 }
             });
-            console.log(tempObject);
+            enableSubmit()
 
         },1);
 
     };
+
+    function enableSubmit(){
+        setTimeout(()=>{
+            if(isSubjectAlphanumeric && scoreValidated && isSemesterValid && isInputUnique)
+                $("#button").prop("disabled", false);
+            else
+                $("#button").prop("disabled", true);
+
+        },1);
+    }
 
     //button to delete the subject entry
     $("form").on("click", ".deleteButton", function(event){
