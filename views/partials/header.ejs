@@ -17,6 +17,15 @@
             input[type=number] {
             -moz-appearance: textfield;
             }
+            footer {
+                position: fixed;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                background-color: rgba(241, 236, 236, 0.87);
+                color: white;
+                text-align: center;
+            }
 	</style>
     </head>
     <body>
@@ -34,15 +43,26 @@
                             <% if(currentPath == "/register") { %>
                                 <li><a href="/login">Login</a></li>
                             <% } %>
-                        <% } else{ %>
-                            <li><a href="#" >Signed in As <%= currentUser.username%></a> </li>
+                        <% } else{ %> 
+                            <li><a href="/semesters"><strong style="font-size: 20px;"><%= currentUser.username%></strong></a></li>
                             <li><a href="/logout">Logout</a></li>
                         <% } %>
-                            
-                        
                     </ul>
                 </div>
             </div>
         </nav>
+        <div class="container">
+            <% if(error && error.length>0) {%>
+                <div class="alert alert-danger" role="alert">
+                    <%=error%>
+                </div>
+            <%}%>
+            <% if(success && success.length>0) {%>
+                <div class="alert alert-success" role="alert">
+                    <%=success%>
+                </div>
+            <%}%>
+        </div>
         
+
     

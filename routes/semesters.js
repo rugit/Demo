@@ -82,8 +82,8 @@ router.get("/semesters/:id", isLoggedIn, (req,res)=>{
     });
 });
 
-//edit semester
 router.get("/semesters/:id/edit", isLoggedIn, (req, res)=>{
+//edit semester
     Semester.findById(req.params.id, (err, foundSemester)=>{
         if(err)
             console.log(err);
@@ -141,6 +141,7 @@ function isLoggedIn(req, res, next){
     if(req.isAuthenticated()){
         return next();
     }
+    req.flash("error", "Please Login first");
     res.redirect("/login");
 }
 

@@ -27,7 +27,8 @@ router.post("/register", (req,res)=>{
     User.register( newUser, req.body.password, (err, user, info)=>{
         if(err){
             console.log(err);
-            return res.render("register");
+            req.flash("error", err.message);
+            return res.redirect("register");
         }
         passport.authenticate("local")(req, res, ()=>{
             res.redirect("/semesters");
@@ -45,7 +46,9 @@ router.get("/login", (req,res)=>{
 router.post("/login", passport.authenticate("local", 
     {
         successRedirect: "/semesters",
-        failureRedirect: "/login"
+        failureRedirect: "/login",
+        successFlash: "You Logged In!",
+        failureFlash: "Invalid username or password!!"
     }), (req, res)=>{
     
 });
@@ -54,7 +57,8 @@ router.post("/login", passport.authenticate("local",
 //logout logic
 router.get("/logout", (req,res)=>{
     req.logout();
-    res.redirect("/");
+    req.flash("success", "You Logged out");
+    res.redirect("/login");
 });
 
 //middleware to check if the user is logged in
@@ -62,6 +66,7 @@ function isLoggedIn(req, res, next){
     if(req.isAuthenticated()){
         return next();
     }
+    req.flash("error", "Please Login first");
     res.redirect("/login");
 }
 

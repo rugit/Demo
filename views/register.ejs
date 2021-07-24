@@ -6,20 +6,20 @@
 
 <div class="container">
 	<div class="row">
-		<h1 style="text-align: center">Sign UP</h1>
+		<h1 style="text-align: center">Sign Up</h1>
 		<div style="width: 30%; margin: 25px auto">
 			<form action="/register" method="POST">
 				<div class="form-group">
-					<input class="form-control" type="text" name="username" placeholder="Username" required onkeyup="validateUserName(this)">
+					<input id="username" class="form-control" type="text" name="username" placeholder="Username" >
 				</div>
 				<div class="form-group">
-					<input class="form-control" type="password" name="password" placeholder="Password" required>
+					<input id="password" class="form-control" type="password" name="password" placeholder="Password" >
 				</div>
 				<div class="form-group">
-					<input class="form-control" type="password" name="confirmPassword" placeholder="Password" required>
+					<input id="confirmPassword" class="form-control" type="password" name="confirmPassword" placeholder="Confirm Password" >
 				</div>
 				<div class="form-group">
-					<button class="btn btn-lg btn-primary btn-block">Sign Up</button>
+					<button id="button" class="btn btn-lg btn-primary btn-block" disabled>Sign Up</button>
 				</div>
 			</form>
 			<a href="/"> Go Back</a>
@@ -29,19 +29,151 @@
 
 <script>
 
-function validateUserName(username){
-	setTimeout(function(){
-		var letters = /^[A-Za-z][A-Za-z0-9_]+$/
-		if(!a.value.match(letters) && a.value !== ""){
-                if(($("#subject_name_error").length)==0)
-                    $("#alert").append("<div id=\"subject_name_error\" class=\"alert alert-danger\" role=\"alert\">Subject name must contain alphanumeric characters only</div>");
-            }
-            else{
-                $("#subject_name_error").remove();
-                a.value = a.value.toUpperCase();
-            } 
-	},1);
-}
+	var button = document.getElementById("button");
+	var password = document.getElementById("password");
+	var userName = document.getElementById("username");
+	var confirmPassword = document.getElementById("confirmPassword");
+
+	var usernameValidated = false;
+	var passwordValidated = false;
+	var passwordMatched = false;
+
+	var confirmPasswordErrorMessage = "";
+	var passwordErrorMessage = "";
+	var usernameErrorMessage = "";
+
+
+	//check all conditions and enable the submit button
+	function enablebutton(){
+		setTimeout(()=>{
+			if( usernameValidated && passwordValidated && passwordMatched){
+                button.removeAttribute("disabled");
+			}else{
+				button.setAttribute("disabled","true");
+			}
+
+		},1);
+	}
+
+
+	//validate Username logic
+	userName.addEventListener('input', (e)=>{
+		
+        let username = e.target.value;
+		let usernameStart = /^[A-Za-z]/;	  
+		let usernameValidCharacters = /[A-Za-z0-9_]+$/
+
+
+		let hasStartCharacter = usernameStart.test(username);
+		let hasvalidCharacters = usernameValidCharacters.test(username);
+		let notEmpty = username.length>0;
+		let hasSixCharacters = username.length>=6;
+
+		if(!notEmpty){
+			usernameErrorMessage = "*Username cannot be empty";	
+		}else if (!hasStartCharacter){
+			usernameErrorMessage = "*Username must start with a character"; 
+		}
+		else if(!hasvalidCharacters){
+			usernameErrorMessage = "*Special character not allowed";
+		}else if(!hasSixCharacters){
+			usernameErrorMessage = "*Username must contain atleast 6 characters";
+		}
+		else{
+			usernameErrorMessage = "";
+		}	
+
+		if(hasStartCharacter && hasvalidCharacters && notEmpty && hasSixCharacters)
+			usernameValidated = true;
+		else
+			usernameValidated = false;
+
+		if(usernameErrorMessage!==""){
+			$("#usernameError").remove();
+			$( "#username" ).after( "<p id=\"usernameError\" style=\"color: red\"> "+usernameErrorMessage+"</p>" );
+		}else{
+			$("#usernameError").remove();
+		}
+		
+
+		//enable button if all conditions are met
+		enablebutton();
+
+
+    });
+
+	//validate Password logic
+    password.addEventListener('input', (e)=>{
+        let password = e.target.value;
+              
+		let hasEightCharacters = password.length>8;
+		let notEmpty = password.length >0;
+		let hasLowerCase = (/[a-z]/).test(password);
+		let hasUpperCase = (/[A-Z]/).test(password);
+		let hasDigit = (/\d/).test(password);
+		let hasSpecialCharacters = (/(_|[^\w\d ])/).test(password);
+
+		if(!notEmpty){
+			passwordErrorMessage = "*Password cannot be empty";	
+		}
+		else if(!hasLowerCase){
+			passwordErrorMessage = "*Password must contain atleast 1 lowercase character";
+		}else if(!hasUpperCase){
+			passwordErrorMessage = "*Password must contain atleast 1 uppercase character";
+		}else if(!hasDigit){
+			passwordErrorMessage = "*Password must contain atleast 1 digit";
+		}else if(!hasSpecialCharacters){
+			passwordErrorMessage = "*Password must contain atleast 1 special character";
+		}else if (!hasEightCharacters){
+			passwordErrorMessage = "*Password must contain atleast 8 characters"; 
+		}
+		else{
+			passwordErrorMessage = "";
+		}	
+
+		if(hasEightCharacters && notEmpty && hasLowerCase && hasUpperCase && hasDigit && hasSpecialCharacters)
+			passwordValidated = true;
+		else
+			passwordValidated = false;
+
+		if(passwordErrorMessage!==""){
+			$("#passwordError").remove();
+			$( "#password" ).after( "<p id=\"passwordError\" style=\"color: red\"> "+passwordErrorMessage+"</p>" );
+		}else{
+			$("#passwordError").remove();
+		}
+
+		//enable button if all conditions are met
+		enablebutton();
+
+	});
+
+	//Confirm Password logic
+	confirmPassword.addEventListener('input', (e)=>{
+        let retypedPassword = e.target.value;
+		
+		if(retypedPassword !== password.value){
+			passwordMatched = false;
+			confirmPasswordErrorMessage = "*Password do not match";
+		}else{
+			passwordMatched = true;
+			confirmPasswordErrorMessage = "";
+		}
+
+
+		if(confirmPasswordErrorMessage!==""){
+			$("#confirmPasswordError").remove();
+			$( "#confirmPassword" ).after( "<p id=\"confirmPasswordError\" style=\"color: red\"> "+confirmPasswordErrorMessage+"</p>" );
+		}else{
+			$("#confirmPasswordError").remove();
+		}
+
+		//enable button if all conditions are met
+		enablebutton();
+	});
+	
+
+
 
 </script>
 <%- include('partials/footer'); %>

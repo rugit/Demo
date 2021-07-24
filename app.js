@@ -4,6 +4,7 @@ var express         = require("express"),
     mongoose        = require("mongoose"),
     passport        = require("passport"),
     LocalStrategy   = require("passport-local"),
+    flash           = require("connect-flash"),
     Semester        = require("./models/semester"),
     methodOverride  = require("method-override"),
     User            = require("./models/user"),           
@@ -17,6 +18,7 @@ mongoose.connect("mongodb://localhost/demo");
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(methodOverride("_method"));
+app.use(flash());
 seedDB();
 
 
@@ -37,6 +39,8 @@ passport.deserializeUser(User.deserializeUser());
 //send logged in User and current route to all routes
 app.use((req, res, next)=>{
     res.locals.currentUser = req.user;
+    res.locals.error = req.flash("error");
+    res.locals.success = req.flash("success");
     next();
 });
 
