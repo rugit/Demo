@@ -17,7 +17,7 @@ router.get("/graph",isLoggedIn, (req, res)=>{
             res.render("graph",{semesters:allSemesters});
         }
     });
-})
+});
 
 
 
@@ -35,6 +35,7 @@ router.get("/semesters", isLoggedIn, (req, res)=>{
         if(err)
             console.log(err);
         else{
+            //sort the data, to show the data of semseters in ascending order of semester
             sortByKey(allSemesters, "semester");
             res.render("semesters/index",{semesters:allSemesters});
         }
@@ -45,7 +46,7 @@ router.get("/semesters", isLoggedIn, (req, res)=>{
 //add semester details - NEW
 router.get("/semesters/new", isLoggedIn, (req,res)=>{
     res.render("semesters/new");
-})
+});
 
 
 //add semester details to database - CREATE
@@ -60,6 +61,8 @@ router.post("/semesters", isLoggedIn, (req, res)=>{
 
     //create new Semester and add it to the database
     var newSemester = {semester: semester, subject: subject};
+
+    //check who the current user is, then add user reference to the semester
     User.findOne({username: req.user.username},(err, user)=>{
         if(err)
             console.log(err);
@@ -95,27 +98,30 @@ router.post("/semesters", isLoggedIn, (req, res)=>{
 //show semester Details - SHOW
 router.get("/semesters/:id", isLoggedIn, (req,res)=>{
     Semester.findById(req.params.id, (err, foundSemester)=>{
-        if(err)
+        if(err){
+            res.render("error404");
             console.log(err);
-        else{
+        }else{
             res.render("semesters/show", {semester: foundSemester});
         }
     });
 });
 
+//edit semester Details - EDIT
 router.get("/semesters/:id/edit", isLoggedIn, (req, res)=>{
-//edit semester
+
     Semester.findById(req.params.id, (err, foundSemester)=>{
-        if(err)
+        if(err){
+            res.render("error404");
             console.log(err);
-        else{
+        }else{
             res.render("semesters/edit", {semester: foundSemester});
         }
     });
 });
 
-//update semester
-router.put("/semesters/:id",(req, res)=>{
+//update semester Details - UPDATE
+router.put("/semesters/:id", isLoggedIn, (req, res)=>{
 
     var semester = req.body.semester;
     var subject = {};
@@ -128,6 +134,7 @@ router.put("/semesters/:id",(req, res)=>{
     //create new Semester and add it to the database
     var updatedSemester = {semester: semester, subject: subject};
 
+    //Find the semester data and update it 
     Semester.findByIdAndUpdate(req.params.id, updatedSemester, (err, Semester)=>{
         if(err)
             console.log(err);
@@ -139,20 +146,20 @@ router.put("/semesters/:id",(req, res)=>{
     });
 });
 
-//delete semester route
-
-router.delete("/semesters/:id",(req, res)=>{
+//delete semester route - DESTROY
+router.delete("/semesters/:id", isLoggedIn, (req, res)=>{
     Semester.findByIdAndRemove(req.params.id, (err, deletedSemester)=>{
         if(err)
             console.log(err);
-        else
+        else{
             req.flash("success", `Semester ${deletedSemester.semester} removed from database`);
             res.redirect("/semesters");
+        }
     });
 });
 
 
-//Functions 
+//Helper Functions 
 function sortByKey(array, key) {
     return array.sort(function(a, b) {
         var x = a[key]; var y = b[key];
@@ -160,6 +167,7 @@ function sortByKey(array, key) {
     });
 }
 
+//Middle to check if a user is logged in
 function isLoggedIn(req, res, next){
     if(req.isAuthenticated()){
         return next();

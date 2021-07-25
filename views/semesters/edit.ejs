@@ -39,16 +39,11 @@
                 </div>    
             </form>
             <a href="/semesters/<%= semester._id%>" >Go Back</a> 
-        </div>
-        
-        
-               
+        </div> 
     </div>
 </div>
 
 <script>
-
-
     var isSubjectAlphanumeric = true;
     var scoreValidated = true;
     var isSemesterValid = true;
@@ -139,6 +134,7 @@
 
     };
 
+    //function of enable submit button if conditions are met
     function enableSubmit(){
         setTimeout(()=>{
             if(isSubjectAlphanumeric && scoreValidated && isSemesterValid && isInputUnique)

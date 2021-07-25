@@ -20,7 +20,7 @@ app.set("view engine", "ejs");
 app.use(methodOverride("_method"));
 app.use(flash());
 
-//seed the database
+//seed the database. Comment the line below to  start the app with a empty database
 seedDB();
 
 
@@ -38,7 +38,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-//send logged in User and current route to all routes
+//send logged in User to all routes
 app.use((req, res, next)=>{
     res.locals.currentUser = req.user;
     res.locals.error = req.flash("error");
@@ -50,6 +50,7 @@ app.use((req, res, next)=>{
 //Requiring routes
 app.use(indexRoutes);
 app.use(semesterRoutes);
+
 
 //default route
 app.get("*",function (req, res) {

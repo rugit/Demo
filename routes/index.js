@@ -5,7 +5,7 @@ var express     = require("express"),
     passport    = require("passport");
 
 
-//landing route
+//ROOT route
 router.get("/", (req, res)=>{
     if(req.user)
         res.redirect("/semesters");
@@ -19,12 +19,12 @@ router.get("/", (req, res)=>{
 //  AUTH ROUTES
 // =============
 
-//register form
+//register form - NEW
 router.get("/register",(req,res)=>{
     res.render("register",{currentPath:req.route.path});
 });
 
-//handling register logic
+//handling register logic - CREATE
 router.post("/register", (req,res)=>{
     var newUser = new User({username: req.body.username});
     User.register( newUser, req.body.password, (err, user, info)=>{
@@ -38,9 +38,9 @@ router.post("/register", (req,res)=>{
         });
             
     });
-})
+});
 
-//login form
+//login form 
 router.get("/login", (req,res)=>{
     res.render("login",{currentPath:req.route.path});
 });
